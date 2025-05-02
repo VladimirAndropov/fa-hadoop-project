@@ -87,7 +87,62 @@ jps
     ssh-keygen -f "/home/vladimir/.ssh/known_hosts" -R "server3"
 
 
-Примеры MapReduce
+Запуск jar-приложений в Hadoop
+-----------------
+
+
+## Начальные данные, шаблоны
+
+[Mysql - данные](https://github.com/VladimirAndropov/fa-nosql-practice/datasets/movielens/movielens-mysql-dump.zip)
+
+[ Mysql - примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/mysql/)
+
+[Redis -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/redis/data-structure-commands/)
+
+[Redis - шаблон JAVA-приложение](https://github.com/VladimirAndropov/movielens-redis-ui)
+
+[Mongo - примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/mongodb/indexes.js)
+
+[ Mongo - шаблон JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/mongodb/mysql2mongodb/)
+
+[Elasticsearch -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/elasticsearch/movielens/movielens_query.json)
+
+[Opensearch - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/elasticsearch/movielens/movielens-es/)
+
+[Influx - данные для БД](https://github.com/VladimirAndropov/fa-nosql-practice/influxdb/dataset/trade-hist-data.zip)
+
+[HBase -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/hbase/apache-phoenix_queries.sql)
+
+[HBase - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/hbase/movielens-hbase/)
+
+[neo4j -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/neo4j/scripts/)
+
+[neo4j - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/neo4j/movielens-neo4j/)
+
+
+## Итоговые приложения, разработанные со студентами на семинарах
+
+
+
+[Семинар 05/03/2025 Redis - JAVA-приложение](https://github.com/VladimirAndropov/movielens-redis-ui)
+
+
+[Семинар 19/03/2025 Mongo - JAVA-приложение](https://github.com/VladimirAndropov/mysql2mongodb)
+
+
+[Семинар 09/04/2025 Opensearch - JAVA-приложение](https://github.com/VladimirAndropov/movielens-es)
+
+
+ ![](1.png)
+  ![](2.png)
+   ![](3.png)
+    ![](4.png)
+     ![](5.png)
+      ![](6.png)
+       ![](7.png)
+        ![](8.png)
+
+Примеры для понимания MapReduce
 -----------------
 
 Примеры расположены в кластере HDInsight в `/edx/app/hadoop/hadoop-2.7.2/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar`. Исходный код этих примеров расположен в кластере HDInsight в `/usr/hdp/current/hadoop-client/src/hadoop-mapreduce-project/hadoop-mapreduce-examples`.
@@ -371,6 +426,10 @@ GraySort — это измерение производительности со
     
 ____
 
+
+
+# Глава 2  - если вы питонщик
+---------------
 
 # Spark
 
