@@ -87,61 +87,12 @@ jps
     ssh-keygen -f "/home/vladimir/.ssh/known_hosts" -R "server3"
 
 
-Запуск jar-приложений в Hadoop
+Глава 1 - Запуск jar-приложений в Hadoop
 -----------------
 
-Приложение должно иметь параметры "откуда брать данные" (input.json) и "куда сохранять результат" (output.txt)
+ ![](11.png)
+  ![](12.png)
 
-## Начальные данные, шаблоны
-
-[Mysql - данные](https://github.com/VladimirAndropov/fa-nosql-practice/datasets/movielens/movielens-mysql-dump.zip)
-
-[ Mysql - примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/mysql/)
-
-[Redis -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/redis/data-structure-commands/)
-
-[Redis - шаблон JAVA-приложение](https://github.com/VladimirAndropov/movielens-redis-ui)
-
-[Mongo - примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/mongodb/indexes.js)
-
-[ Mongo - шаблон JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/mongodb/mysql2mongodb/)
-
-[Elasticsearch -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/elasticsearch/movielens/movielens_query.json)
-
-[Opensearch - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/elasticsearch/movielens/movielens-es/)
-
-[Influx - данные для БД](https://github.com/VladimirAndropov/fa-nosql-practice/influxdb/dataset/trade-hist-data.zip)
-
-[HBase -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/hbase/apache-phoenix_queries.sql)
-
-[HBase - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/hbase/movielens-hbase/)
-
-[neo4j -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/neo4j/scripts/)
-
-[neo4j - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/neo4j/movielens-neo4j/)
-
-
-## Итоговые приложения, разработанные со студентами на семинарах
-
-
-
-[Семинар 05/03/2025 Redis - JAVA-приложение](https://github.com/VladimirAndropov/movielens-redis-ui)
-
-
-[Семинар 19/03/2025 Mongo - JAVA-приложение](https://github.com/VladimirAndropov/mysql2mongodb)
-
-
-[Семинар 09/04/2025 Opensearch - JAVA-приложение](https://github.com/VladimirAndropov/movielens-es)
-
-
- ![](1.png)
-  ![](2.png)
-   ![](3.png)
-    ![](4.png)
-     ![](5.png)
-      ![](6.png)
-       ![](7.png)
-        ![](8.png)
 
 Примеры для понимания MapReduce
 -----------------
@@ -431,6 +382,24 @@ ____
 
 # Глава 2  - если вы питонщик
 ---------------
+
+Map - Reduce
+
+   ![](13.png)
+
+
+Шаг полсчет суммы в поточной обработке  
+![](15.png)
+
+Запуск локально и в экосистеме Hadoop в поточной обработке  
+
+ ![](16.png)
+
+
+ Алгоритм сортировки:
+
+  ![](20.png)
+
 
 # Spark
 
@@ -834,3 +803,71 @@ remote-task --host server3 --user vladimir --private-key /home/vladimir/yandex-f
 cd /var/lib/analytics-tasks/analyticstack/venv/share/edx.analytics.tasks/
 /var/lib/analytics-tasks/analyticstack/venv/bin/ansible-playbook  -vvv -i server3, -c local  /var/lib/analytics-tasks/analyticstack/venv/share/edx.analytics.tasks/task.yml  -e pipeline_repo_dir_name=repo -e item.url=https://github.com/openedx/edx-analytics-pipeline.git  -e item.dir_name= repo -e item.branch=master  -e  name=all  -e  branch=open-release/hawthorn.master   -e  write_luigi_config=false  -e  root_log_dir=/var/log/analytics-tasks  -e  root_data_dir=/var/lib/analytics-tasks  -e  override_config=/edx/app/edx-analytics-pipeline/edx-analytics-pipeline/config/devstack.cfg  -e  uuid=analyticstack -e repo.url=https://github.com/edx/edx-analytics-pipeline.git
 ```
+
+Глава 3 NoSQL в Hadoop
+--------------------------------
+
+Данные должны быть денормализованы.
+
+Если используется Mysql, то данные кешируются используя Memcached, поверх БД.
+
+Можно расшарить БД (Шардинг) за счет разделения данных на диапазоны ключей. 
+Однако, в реляционной БД всё равно наступит момент, когда начнутся ошибки и переполнение памяти. По моему опыту после 50 Гб данных.
+
+Решение: использовать для bigData нереляционные БД - noSQL
+
+ ![](22.png)
+
+Приложение должно иметь параметры "откуда брать данные" (input.json) и "куда сохранять результат" (output.txt)
+Данные должны быть денормализованы.
+
+## Начальные данные, шаблоны
+
+[Mysql - данные](https://github.com/VladimirAndropov/fa-nosql-practice/datasets/movielens/movielens-mysql-dump.zip)
+
+[ Mysql - примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/mysql/)
+
+[Redis -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/redis/data-structure-commands/)
+
+[Redis - шаблон JAVA-приложение](https://github.com/VladimirAndropov/movielens-redis-ui)
+
+[Mongo - примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/mongodb/indexes.js)
+
+[ Mongo - шаблон JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/mongodb/mysql2mongodb/)
+
+[Elasticsearch -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/elasticsearch/movielens/movielens_query.json)
+
+[Opensearch - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/elasticsearch/movielens/movielens-es/)
+
+[Influx - данные для БД](https://github.com/VladimirAndropov/fa-nosql-practice/influxdb/dataset/trade-hist-data.zip)
+
+[HBase -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/hbase/apache-phoenix_queries.sql)
+
+[HBase - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/hbase/movielens-hbase/)
+
+[neo4j -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/neo4j/scripts/)
+
+[neo4j - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/neo4j/movielens-neo4j/)
+
+
+## Итоговые приложения, разработанные со студентами на семинарах
+
+
+
+[Семинар 05/03/2025 Redis - JAVA-приложение](https://github.com/VladimirAndropov/movielens-redis-ui)
+
+
+[Семинар 19/03/2025 Mongo - JAVA-приложение](https://github.com/VladimirAndropov/mysql2mongodb)
+
+
+[Семинар 09/04/2025 Opensearch - JAVA-приложение](https://github.com/VladimirAndropov/movielens-es)
+
+
+ ![](1.png)
+  ![](2.png)
+   ![](3.png)
+    ![](4.png)
+![](5.png)
+ ![](6.png)
+![](7.png)
+ ![](8.png)
