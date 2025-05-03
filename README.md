@@ -970,7 +970,7 @@ ratings.drop()
 
 ![](32.png)
 
-[Mongo - примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/mongodb/indexes.js)
+[Mongo - примеры запросов к БД - создать индекс](https://github.com/VladimirAndropov/fa-nosql-practice/mongodb/indexes.js)
 
 [Mongo -  Map-Reduce](https://github.com/VladimirAndropov/fa-nosql-practice/mongodb/analytical_queries/movie_genre_count_per_year_using_mapreduce.js)
 
@@ -980,7 +980,7 @@ db.movies.mapReduce(mapFn, reduceFn, {out: {inline: 1}, query: {}}) //outputs to
 PS: вместо hdfs используеся GridFs
 
 
-пример на Python
+пример на Python (MongoSpark.py)
 ```py
 from pyspark.sql import SparkSession
 from pyspark.sql import Row
@@ -1023,8 +1023,33 @@ if __name__ == "__main__":
     spark.stop()
 ```
 
+Итак, для работы с Mongo в экосстеме Hadoop нам потребуется Spark
+
+Запускаем Spark
+
+```bash
+/edx/app/hadoop/spark/sbin/start-all.sh
+```
+Теперь чтобы запустить python- скрипт MongoSpark.py в Spark
+
+```
+/edx/app/hadoop/spark/bin/spark-submit MongoSpark.py
+```
 
 [ Mongo - шаблон JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/mongodb/mysql2mongodb/)
+
+JAVA-приложение запускается аналогично
+
+
+```
+spark-submit \
+  --class com.example.MySparkApp \
+  --master local[4] \
+  /path/to/your-application.jar
+
+
+```
+
 
 ## Итоговые приложения, разработанные со студентами на семинарах
 
