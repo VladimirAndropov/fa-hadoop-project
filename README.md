@@ -2,18 +2,19 @@
 
 ## Установить hadoop
 
-Скачать архив, разархивировать под тем пользователем с которого скачали Зайти под рутом и Переместить рахархивированную папку edx в корень /
-Выполнить команду, чтобы добавить в .bashrc
-переменные окружения
+План работ:
 
-То есть выполнить следующее в терминале
+- Скачать архив, разархивировать под тем пользователем с которого скачали Зайти под рутом и Переместить рахархивированную папку edx в корень /
+- Выполнить команду, чтобы добавить в .bashrc переменные окружения
+
+
+скорее всего эта команда не сработает
 
 ```
 cd $HOME
-скорее всего Вы не залогинены в гугле и эта команда не сработает
-wget -nc https://drive.google.com/file/d/1YgSxm63cGnohwv-J3KdDBGZPzLTFOdaS/view?usp=sharing
+wget -nc https://cloud.mail.ru/public/YVas/AjV9hcbSJ
 ```
-Если wget не работает(Вы не залогинены в гугле) СКАЧИВАЕМ ВРУЧНУЮ В БРАУЗЕРЕ [По ССЫЛКЕ](https://drive.google.com/file/d/1YgSxm63cGnohwv-J3KdDBGZPzLTFOdaS/view?usp=sharing)
+Если wget не работает  СКАЧИВАЕМ ВРУЧНУЮ В БРАУЗЕРЕ [По ССЫЛКЕ](https://cloud.mail.ru/public/YVas/AjV9hcbSJ)
 ```
 tar zxvf edx.tar.gz
 
@@ -87,7 +88,7 @@ jps
     ssh-keygen -f "/home/vladimir/.ssh/known_hosts" -R "server3"
 
 
-Глава 1 - Запуск jar-приложений в Hadoop
+Этап 1 - Map-reduce через jar-приложения в Hadoop
 -----------------
 
  ![](11.png)
@@ -380,7 +381,7 @@ ____
 
 
 
-# Глава 2  - если вы питонщик
+# Зтап 2  - MapReduce в Hadoop через python 
 ---------------
 
 Map - Reduce
@@ -388,18 +389,49 @@ Map - Reduce
    ![](13.png)
 
 
-Шаг полсчет суммы в поточной обработке  
-![](15.png)
 
-Запуск локально и в экосистеме Hadoop в поточной обработке  
+
+# MRJob
+
+ Алгоритм сортировки:
+
+
+
+```py
+from mrjob.job import MRJob
+from mrjob.step import MRStep
+
+class RatingsBreakdown(MRJob):
+    def steps(self):
+        return [
+            MRStep(mapper=self.mapper_get_ratings,
+                   reducer=self.reducer_count_ratings),
+            MRStep(reducer=self.reducer_sorted_output)
+        ]
+
+    def mapper_get_ratings(self, _, line):
+        (userID, movieID, rating, timestamp) = line.split('\t')
+        yield movieID, 1
+
+    def reducer_count_ratings(self, key, values):
+        yield str(sum(values)).zfill(5), key
+
+    def reducer_sorted_output(self, count, movies):
+        for movie in movies:
+            yield movie, count
+
+
+if __name__ == '__main__':
+    RatingsBreakdown.run()
+```
+
+
+Запуск локально и в экосистеме Hadoop в потоковой обработке  
 
  ![](16.png)
 
 
- Алгоритм сортировки:
-
-  ![](20.png)
-
+[Примеры ML- алгоритмов](https://github.com/selfedu-rus/machine_learning)
 
 # Spark
 
@@ -804,70 +836,248 @@ cd /var/lib/analytics-tasks/analyticstack/venv/share/edx.analytics.tasks/
 /var/lib/analytics-tasks/analyticstack/venv/bin/ansible-playbook  -vvv -i server3, -c local  /var/lib/analytics-tasks/analyticstack/venv/share/edx.analytics.tasks/task.yml  -e pipeline_repo_dir_name=repo -e item.url=https://github.com/openedx/edx-analytics-pipeline.git  -e item.dir_name= repo -e item.branch=master  -e  name=all  -e  branch=open-release/hawthorn.master   -e  write_luigi_config=false  -e  root_log_dir=/var/log/analytics-tasks  -e  root_data_dir=/var/lib/analytics-tasks  -e  override_config=/edx/app/edx-analytics-pipeline/edx-analytics-pipeline/config/devstack.cfg  -e  uuid=analyticstack -e repo.url=https://github.com/edx/edx-analytics-pipeline.git
 ```
 
-Глава 3 NoSQL в Hadoop
+Этап 3  MapReduce в Hadoop через запросы БД NoSQL
 --------------------------------
 
-Данные должны быть денормализованы.
+Условие: распределенные по нескольким серверам данные
 
-Если используется Mysql, то данные кешируются используя Memcached, поверх БД.
+# HBASE
 
-Можно расшарить БД (Шардинг) за счет разделения данных на диапазоны ключей. 
-Однако, в реляционной БД всё равно наступит момент, когда начнутся ошибки и переполнение памяти. По моему опыту после 50 Гб данных.
+БД колоночного типа:
 
-Решение: использовать для bigData нереляционные БД - noSQL
+ ![](23.png)
+  ![](24.png)
+ ![](26.png)
+
+
+Загружаем тестовые данные из файла /user/maria_dev/ml-100k/u.user в HBASE
+используя утилиту pig
+
+Этот механизм по сути и есть Map-reduce
+
+```bash
+
+users = LOAD '/user/maria_dev/ml-100k/u.user' 
+USING PigStorage('|') 
+AS (userID:int, age:int, gender:chararray, occupation:chararray, zip:int);
+
+STORE users INTO 'hbase://users' 
+USING org.apache.pig.backend.hadoop.hbase.HBaseStorage (
+'userinfo:age,userinfo:gender,userinfo:occupation,userinfo:zip');
+
+```
+## Python-скрипт для работы с HBase в Hadoop
+
+Напишем небольшой код для понимания процедуры заполнения данными БД колоночного типа. 
+Каждому юзеру мы сопостовляем семейство колоночных таблиц, где у нас будут результаты его оценок каждого фильма
+
+Архитектура приложения
+
+![](27.png)
+
+```py
+from starbase import Connection
+
+# Establish connection to HBase REST server
+c = Connection("127.0.0.1", "8000")
+
+# Get reference to 'ratings' table
+ratings = c.table('ratings')
+
+# If table exists, drop it
+if ratings.exists():
+    print("Dropping existing ratings table\n")
+    ratings.drop()
+
+# Create new table with 'rating' column family
+ratings.create('rating')
+
+print("Parsing the ml-100k ratings data...\n")
+
+# Open MovieLens dataset
+ratingFile = open("e:/Downloads/ml-100k/ml-100k/u.data", "r")
+
+# Здесь можно использовать файл на hdfs через Spark
+#ratingFile = spark.sparkContext.textFile("hdfs:///user/maria_dev/ml-100k/u.user")
+
+# Create batch for bulk loading
+batch = ratings.batch()
+
+# Process each rating
+for line in ratingFile:
+    (userID, movieID, rating, timestamp) = line.split()
+    batch.update(userID, {'rating': {movieID: rating}})
+
+ratingFile.close()
+
+print("Committing ratings data to HBase via REST service\n")
+batch.commit(finalize=True)
+
+# Retrieve and display ratings for specific users
+print("Get back ratings for some users...\n")
+
+# Get ratings for user ID 1
+print("Ratings for user ID 1:\n")
+print(ratings.fetch("1"))
+
+# Get ratings for user ID 33
+print("Ratings for user ID 33:\n")
+print(ratings.fetch("33"))
+
+ratings.drop()
+
+```
+
+Запускаем скрипт через Canopy
+
+```bash
+/usr/hdp/current/hbase-master/bin/hbase-daemon.sh start rest -p 8000 --infoport 8001
+
+```
+
+
+
+![](30.png)
+
+
+Варианты запуска скрипта
+
+![](25.png)
+
+Останавливаем Canopy
+
+```bash
+ /usr/hdp/current/hbase-master/bin/hbase-daemon.sh stop rest
+
+```
+
+[HBase -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/hbase/apache-phoenix_queries.sql)
+
+## JAVA-приложение работы с HBase в Hadoop
+
+[HBase - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/hbase/movielens-hbase/)
+
+# MONGO
+
+Архитектура приложения использующего Mongo для доступа к распределенным данным hdfs
 
  ![](22.png)
 
-Приложение должно иметь параметры "откуда брать данные" (input.json) и "куда сохранять результат" (output.txt)
+Приложение должно иметь параметры "откуда брать данные"  и "куда сохранять результат" 
 Данные должны быть денормализованы.
 
-## Начальные данные, шаблоны
+Шардинг
 
-[Mysql - данные](https://github.com/VladimirAndropov/fa-nosql-practice/datasets/movielens/movielens-mysql-dump.zip)
-
-[ Mysql - примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/mysql/)
-
-[Redis -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/redis/data-structure-commands/)
-
-[Redis - шаблон JAVA-приложение](https://github.com/VladimirAndropov/movielens-redis-ui)
+![](32.png)
 
 [Mongo - примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/mongodb/indexes.js)
 
+[Mongo -  Map-Reduce](https://github.com/VladimirAndropov/fa-nosql-practice/mongodb/analytical_queries/movie_genre_count_per_year_using_mapreduce.js)
+
+```java
+db.movies.mapReduce(mapFn, reduceFn, {out: {inline: 1}, query: {}}) //outputs to screen
+```
+PS: вместо hdfs используеся GridFs
+
+
+пример на Python
+```py
+from pyspark.sql import SparkSession
+from pyspark.sql import Row
+from pyspark.sql import functions
+
+def parseInput(line):
+    fields = line.split('|')
+    return Row(user_id = int(fields[0]), age = int(fields[1]), gender = fields[2], occupation = fields[3], zip = fields[4])
+
+if __name__ == "__main__":
+    # Create a SparkSession
+    spark = SparkSession.builder.appName("MongoDBIntegration").getOrCreate()
+
+    # Get the raw data
+    lines = spark.sparkContext.textFile("hdfs:///user/maria_dev/ml-100k/u.user")
+    # Convert it to a RDD of Row objects with (userID, age, gender, occupation, zip)
+    users = lines.map(parseInput)
+    # Convert that to a DataFrame
+    usersDataset = spark.createDataFrame(users)
+
+    # Write it into MongoDB
+    usersDataset.write\
+        .format("com.mongodb.spark.sql.DefaultSource")\
+        .option("uri","mongodb://127.0.0.1/movielens.users")\
+        .mode('append')\
+        .save()
+
+    # Read it back from MongoDB into a new Dataframe
+    readUsers = spark.read\
+    .format("com.mongodb.spark.sql.DefaultSource")\
+    .option("uri","mongodb://127.0.0.1/movielens.users")\
+    .load()
+
+    readUsers.createOrReplaceTempView("users")
+
+    sqlDF = spark.sql("SELECT * FROM users WHERE age < 20")
+    sqlDF.show()
+
+    # Stop the session
+    spark.stop()
+```
+
+
 [ Mongo - шаблон JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/mongodb/mysql2mongodb/)
+
+## Итоговые приложения, разработанные со студентами на семинарах
+
+
+[Семинар 19/03/2025 Mongo - JAVA-приложение](https://github.com/VladimirAndropov/mysql2mongodb)
+
+![](5.png)
+ ![](6.png)
+![](7.png)
+ ![](8.png)
+
+
+# ELASTICSEARCH
+
 
 [Elasticsearch -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/elasticsearch/movielens/movielens_query.json)
 
 [Opensearch - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/elasticsearch/movielens/movielens-es/)
 
-[Influx - данные для БД](https://github.com/VladimirAndropov/fa-nosql-practice/influxdb/dataset/trade-hist-data.zip)
+## Итоговые приложения, разработанные со студентами на семинарах
 
-[HBase -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/hbase/apache-phoenix_queries.sql)
 
-[HBase - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/hbase/movielens-hbase/)
+[Семинар 09/04/2025 Opensearch - JAVA-приложение](https://github.com/VladimirAndropov/movielens-es)
 
-[neo4j -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/neo4j/scripts/)
+# REDIS
 
-[neo4j - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/neo4j/movielens-neo4j/)
+
+[Redis -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/redis/data-structure-commands/)
+
+[Redis - шаблон JAVA-приложение](https://github.com/VladimirAndropov/movielens-redis-ui)
+
+
 
 
 ## Итоговые приложения, разработанные со студентами на семинарах
 
-
-
 [Семинар 05/03/2025 Redis - JAVA-приложение](https://github.com/VladimirAndropov/movielens-redis-ui)
 
-
-[Семинар 19/03/2025 Mongo - JAVA-приложение](https://github.com/VladimirAndropov/mysql2mongodb)
-
-
-[Семинар 09/04/2025 Opensearch - JAVA-приложение](https://github.com/VladimirAndropov/movielens-es)
 
 
  ![](1.png)
   ![](2.png)
    ![](3.png)
     ![](4.png)
-![](5.png)
- ![](6.png)
-![](7.png)
- ![](8.png)
+
+
+# NEO4J
+
+[neo4j -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/neo4j/scripts/)
+
+[neo4j - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/neo4j/movielens-neo4j/)
+
+# INFLUX
+
+[Influx - данные для БД](https://github.com/VladimirAndropov/fa-nosql-practice/influxdb/dataset/trade-hist-data.zip)
+
