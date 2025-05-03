@@ -1093,14 +1093,54 @@ spark.read.format("org.apache.spark.sql.redis").option("table", "your_table").op
    ![](3.png)
     ![](4.png)
 
-________________
 
-Не поддерживаемые Hadoop:
 
 # ELASTICSEARCH
 
+Мои дефолтные параметры для доступа
+```
 user = admin
-password = Opensearch1!
+ password = Opensearch1!
+
+``` 
+
+
+- ##  интеграция с Hadoop:
+
+```
+$ bin/hadoop jar myJar.jar -libjars elasticsearch-hadoop.jar
+```
+Подробнее смотрите по ссылке
+https://www.elastic.co/guide/en/elasticsearch/hadoop/8.18/mapreduce.html
+
+- ## интеграция через Scala
+
+```
+$ ./bin/spark-submit --conf spark.es.resource=index/type ... 
+```
+
+- ## java
+
+При использовании Java  есть выделенный класс, который обеспечивает аналогичную функцию для Esspark, а именно JavaEsSpark в библиотеке org.elasticsearch.spark.rdd.api.java (пакет, аналогичный Java API Spark):
+
+```java
+
+import org.apache.spark.api.java.JavaSparkContext;                              
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.SparkConf;
+
+import org.elasticsearch.spark.rdd.api.java.JavaEsSpark;                        
+...
+
+SparkConf conf = ...
+JavaSparkContext jsc = new JavaSparkContext(conf);                              
+
+Map<String, ?> numbers = ImmutableMap.of("one", 1, "two", 2);                   
+Map<String, ?> airports = ImmutableMap.of("OTP", "Otopeni", "SFO", "San Fran");
+
+JavaRDD<Map<String, ?>> javaRDD = jsc.parallelize(ImmutableList.of(numbers, airports));
+JavaEsSpark.saveToEs(javaRDD, "spark/docs");                                    
+```
 
 [Elasticsearch -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/elasticsearch/movielens/movielens_query.json)
 
@@ -1112,7 +1152,11 @@ password = Opensearch1!
 
 [Семинар 09/04/2025 Opensearch - JAVA-приложение](https://github.com/VladimirAndropov/movielens-es)
 
-# NEO4J
+________________
+
+# Не поддерживаемые Hadoop:
+
+## NEO4J
 
 [neo4j -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/neo4j/scripts/)
 
