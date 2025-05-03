@@ -1062,23 +1062,22 @@ spark-submit \
  ![](8.png)
 
 
-# ELASTICSEARCH
-
-user = admin
-password = Opensearch1!
-
-[Elasticsearch -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/elasticsearch/movielens/movielens_query.json)
-
-[Opensearch - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/elasticsearch/movielens/movielens-es/)
-
-## Итоговые приложения, разработанные со студентами на семинарах
-
-[Семинар 09/04/2025 Opensearch - REST API](https://github.com/VladimirAndropov/fa-nosql-practice/elasticsearch/elasticsearchRESTAPI.json)
-
-[Семинар 09/04/2025 Opensearch - JAVA-приложение](https://github.com/VladimirAndropov/movielens-es)
 
 # REDIS
 
+Интеграция с Hadoop через Spark
+
+```py
+# Assume 'df' is your DataFrame
+# Write DataFrame to Redis
+df.write.format("org.apache.spark.sql.redis").option("table", "your_table").option("key.column", "your_key_column").save()
+```
+
+```py
+# Read DataFrame from Redis
+spark.read.format("org.apache.spark.sql.redis").option("table", "your_table").option("key.column", "your_key_column").load()
+
+```
 
 [Redis -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/redis/data-structure-commands/)
 
@@ -1094,6 +1093,24 @@ password = Opensearch1!
    ![](3.png)
     ![](4.png)
 
+________________
+
+Не поддерживаемые Hadoop:
+
+# ELASTICSEARCH
+
+user = admin
+password = Opensearch1!
+
+[Elasticsearch -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/elasticsearch/movielens/movielens_query.json)
+
+[Opensearch - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/elasticsearch/movielens/movielens-es/)
+
+## Итоговые приложения, разработанные со студентами на семинарах
+
+[Семинар 09/04/2025 Opensearch - REST API](https://github.com/VladimirAndropov/fa-nosql-practice/elasticsearch/elasticsearchRESTAPI.json)
+
+[Семинар 09/04/2025 Opensearch - JAVA-приложение](https://github.com/VladimirAndropov/movielens-es)
 
 # NEO4J
 
@@ -1101,7 +1118,5 @@ password = Opensearch1!
 
 [neo4j - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/neo4j/movielens-neo4j/)
 
-# INFLUX
 
-[Influx - данные для БД](https://github.com/VladimirAndropov/fa-nosql-practice/influxdb/dataset/trade-hist-data.zip)
 
