@@ -1064,6 +1064,8 @@ spark-submit \
 
 # ELASTICSEARCH
 
+user = admin
+password = Opensearch1!
 
 [Elasticsearch -примеры запросов к БД](https://github.com/VladimirAndropov/fa-nosql-practice/elasticsearch/movielens/movielens_query.json)
 
@@ -1071,6 +1073,7 @@ spark-submit \
 
 ## Итоговые приложения, разработанные со студентами на семинарах
 
+[Семинар 09/04/2025 Opensearch - REST API](https://github.com/VladimirAndropov/fa-nosql-practice/elasticsearch/elasticsearchRESTAPI.json)
 
 [Семинар 09/04/2025 Opensearch - JAVA-приложение](https://github.com/VladimirAndropov/movielens-es)
 
@@ -1082,13 +1085,9 @@ spark-submit \
 [Redis - шаблон JAVA-приложение](https://github.com/VladimirAndropov/movielens-redis-ui)
 
 
-
-
 ## Итоговые приложения, разработанные со студентами на семинарах
 
 [Семинар 05/03/2025 Redis - JAVA-приложение](https://github.com/VladimirAndropov/movielens-redis-ui)
-
-
 
  ![](1.png)
   ![](2.png)
