@@ -976,6 +976,18 @@ ratings.drop()
 
 ```java
 db.movies.mapReduce(mapFn, reduceFn, {out: {inline: 1}, query: {}}) //outputs to screen
+
+var mapFn = function(){
+	var genres = this.genres;
+	var year = this.release_year;
+	//emit each genre as count 1
+	for (var i = 0; i < genres.length; i++)
+		emit({'year': year, 'genre': genres[i]}, 1);
+}
+
+var reduceFn = function(key, values) {
+	return Array.sum(values);
+}
 ```
 PS: вместо hdfs используеся GridFs
 
@@ -1113,7 +1125,7 @@ $ bin/hadoop jar myJar.jar -libjars elasticsearch-hadoop.jar
 Подробнее смотрите по ссылке
 https://www.elastic.co/guide/en/elasticsearch/hadoop/8.18/mapreduce.html
 
-- ## интеграция через Scala
+- ## интеграция через Spark
 
 ```
 $ ./bin/spark-submit --conf spark.es.resource=index/type ... 
@@ -1154,7 +1166,7 @@ JavaEsSpark.saveToEs(javaRDD, "spark/docs");
 
 ________________
 
-# Не поддерживаемые Hadoop:
+# Витрины-OLAP:
 
 ## NEO4J
 
@@ -1162,5 +1174,7 @@ ________________
 
 [neo4j - JAVA-приложение](https://github.com/VladimirAndropov/fa-nosql-practice/neo4j/movielens-neo4j/)
 
+# Кроссплатфорmенные приложения (шаблоны):
 
-
+[Flutter](https://github.com/VladimirAndropov/fa-cross-practice)
+[React Native](https://github.com/VladimirAndropov/fa-cross-practice)
